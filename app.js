@@ -3,9 +3,22 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const { createClient } = require('@supabase/supabase-js');
+const cloudinary = require('cloudinary').v2;
+const multer = require('multer');
 
 const app = express();
 app.use(express.json());
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 25 * 1024 * 1024 }
+});
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -28,18 +41,57 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
+// Upload Photo, Video, or Voice Note to Cloudinary
+app.post('/api/upload', upload.single('media'), async (req, res) => {
+  try {
+    const token = req.headers.authorization?.replace('Bearer ', '');
+    if (!token || !req.file) return res.status(400).json({ error: 'Missing file or token' });
+
+    const { data: { user } } = await supabaseAdmin.auth.getUser(token);
+    if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+    const mime = req.file.mimetype;
+    let msgType = 'image';
+    if (mime.startsWith('video/')) msgType = 'video';
+    else if (mime.startsWith('audio/')) msgType = 'voice';
+
+    const result = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'super-messenger',
+          resource_type: 'auto',
+          quality: 'auto',
+          fetch_format: 'auto'
+        },
+        (err, uploaded) => (err ? reject(err) : resolve(uploaded))
+      );
+      stream.end(req.file.buffer);
+    });
+
+    const liteUrl = msgType === 'image'
+      ? result.secure_url.replace('/upload/', '/upload/w_480,q_auto:eco/')
+      : result.secure_url;
+
+    res.json({
+      url: result.secure_url,
+      liteUrl,
+      msgType
+    });
+  } catch (err) {
+    console.error('Upload error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 app.get('/api/users', async (req, res) => {
   const token = req.headers.authorization?.replace('Bearer ', '');
   if (!token) return res.status(401).json({ error: 'Unauthorized' });
 
   const { data: { user }, error: authErr } = await supabaseAdmin.auth.getUser(token);
-  if (authErr || !user) {
-    console.log('Auth error:', authErr?.message);
-    return res.status(401).json({ error: 'Invalid token' });
-  }
+  if (authErr || !user) return res.status(401).json({ error: 'Invalid token' });
 
   const emailPrefix = user.email.split('@')[0];
-  const { error: upsertErr } = await supabaseAdmin.from('users').upsert({
+  await supabaseAdmin.from('users').upsert({
     id: user.id,
     email: user.email,
     username: `${emailPrefix}_${user.id.slice(0, 4)}`,
@@ -47,15 +99,11 @@ app.get('/api/users', async (req, res) => {
     avatar_url: user.user_metadata?.avatar_url || ''
   }, { onConflict: 'id' });
 
-  if (upsertErr) console.log('Upsert error:', upsertErr.message);
-
-  const { data: users, error: listErr } = await supabaseAdmin
+  const { data: users } = await supabaseAdmin
     .from('users')
     .select('*')
     .neq('id', user.id);
 
-  if (listErr) console.log('List error:', listErr.message);
-  console.log(`Loaded ${(users || []).length} other users for ${user.email}`);
   res.json(users || []);
 });
 
@@ -157,7 +205,7 @@ io.on('connection', async (socket) => {
         sender_id: userId,
         reply_to_id: payload.replyToId || null,
         msg_type: payload.msgType || 'text',
-        content: payload.content,
+        content: payload.content || '',
         media_url: payload.mediaUrl || null,
         media_lite_url: payload.mediaLiteUrl || null,
         is_forwarded: payload.isForwarded || false,
@@ -239,4 +287,3 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Super Messenger backend running on port ${PORT}`);
 });
-
