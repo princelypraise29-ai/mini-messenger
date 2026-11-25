@@ -41,28 +41,32 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
-// Upload Photo, Video, or Voice Note to Cloudinary
 app.post('/api/upload', upload.single('media'), async (req, res) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
-    if (!token || !req.file) return res.status(400).json({ error: 'Missing file or token' });
+    if (!token || !req.file) {
+      console.log('Upload missing token or file:', !!token, !!req.file);
+      return res.status(400).json({ error: 'Missing file or token' });
+    }
 
     const { data: { user } } = await supabaseAdmin.auth.getUser(token);
     if (!user) return res.status(401).json({ error: 'Unauthorized' });
 
-    const mime = req.file.mimetype;
-    let msgType = 'image';
-    if (mime.startsWith('video/')) msgType = 'video';
-    else if (mime.startsWith('audio/')) msgType = 'voice';
+    const mime = req.file.mimetype || '';
+    const isAudio = mime.startsWith('audio/') || req.file.originalname.includes('voice');
+    const isVideo = mime.startsWith('video/');
+    const msgType = isAudio ? 'voice' : isVideo ? 'video' : 'image';
+
+    console.log(`Uploading ${msgType} (${mime}, ${req.file.size} bytes)...`);
+
+    const uploadOptions = {
+      folder: 'super-messenger',
+      resource_type: isAudio || isVideo ? 'video' : 'image'
+    };
 
     const result = await new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
-        {
-          folder: 'super-messenger',
-          resource_type: 'auto',
-          quality: 'auto',
-          fetch_format: 'auto'
-        },
+        uploadOptions,
         (err, uploaded) => (err ? reject(err) : resolve(uploaded))
       );
       stream.end(req.file.buffer);
@@ -72,14 +76,11 @@ app.post('/api/upload', upload.single('media'), async (req, res) => {
       ? result.secure_url.replace('/upload/', '/upload/w_480,q_auto:eco/')
       : result.secure_url;
 
-    res.json({
-      url: result.secure_url,
-      liteUrl,
-      msgType
-    });
+    console.log('Upload success:', result.secure_url);
+    res.json({ url: result.secure_url, liteUrl, msgType });
   } catch (err) {
-    console.error('Upload error:', err.message);
-    res.status(500).json({ error: err.message });
+    console.error('Cloudinary upload error:', err);
+    res.status(500).json({ error: err.message || 'Upload failed' });
   }
 });
 
@@ -287,3 +288,4 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Super Messenger backend running on port ${PORT}`);
 });
+

@@ -7,194 +7,362 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/socket.io/socket.io.js"></script>
   <style>
-    * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    * { box-sizing: border-box; font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif; }
     :root {
-      --bg: #0b0e14;
-      --glass: rgba(255, 255, 255, 0.06);
-      --glass-border: rgba(255, 255, 255, 0.12);
-      --accent: linear-gradient(135deg, #00d2ff 0%, #7b2ff7 100%);
-      --text: #f3f4f6;
-      --muted: #9ca3af;
-    }
-    body.theme-rose {
-      --bg: #140b12;
-      --accent: linear-gradient(135deg, #ff4b8b 0%, #ff8e53 100%);
+      --navy-deep: #060d1f;
+      --navy-panel: #0b162c;
+      --navy-header: #0f1f3d;
+      --navy-elevated: #15284c;
+      --navy-border: rgba(148, 185, 255, 0.14);
+      --bubble-mine: linear-gradient(135deg, #1d4ed8 0%, #0284c7 100%);
+      --bubble-theirs: #13223f;
+      --gold-accent: #38bdf8;
+      --online-green: #22c55e;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
     }
     body {
-      margin: 0; background: var(--bg); color: var(--text);
-      height: 100dvh; display: flex; justify-content: center; overflow: hidden;
-      background-image: radial-gradient(circle at 15% 15%, rgba(123, 47, 247, 0.18), transparent 40%),
-                        radial-gradient(circle at 85% 85%, rgba(0, 210, 255, 0.15), transparent 40%);
+      margin: 0;
+      background: radial-gradient(circle at top left, #0f254e 0%, var(--navy-deep) 60%);
+      color: var(--text-main);
+      height: 100dvh;
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
     }
-    #app {
-      width: 100%; max-width: 960px; height: 100dvh; display: flex;
-      background: rgba(15, 19, 28, 0.75); backdrop-filter: blur(20px);
-      border-left: 1px solid var(--glass-border); border-right: 1px solid var(--glass-border);
-    }
+
+    /* LOGIN SCREEN */
     #login-screen {
-      margin: auto; text-align: center; padding: 36px 28px; max-width: 380px; width: 90%;
-      background: var(--glass); border: 1px solid var(--glass-border); border-radius: 24px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+      margin: auto;
+      text-align: center;
+      padding: 44px 34px;
+      max-width: 400px;
+      width: 92%;
+      background: linear-gradient(180deg, rgba(21, 40, 76, 0.85) 0%, rgba(11, 22, 44, 0.95) 100%);
+      border: 1px solid var(--navy-border);
+      border-radius: 28px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65);
     }
-    .logo-orb {
-      width: 68px; height: 68px; margin: 0 auto 16px; border-radius: 22px;
-      background: var(--accent); display: grid; place-items: center; font-size: 30px;
-      box-shadow: 0 0 30px rgba(0, 210, 255, 0.4);
+    .brand-badge {
+      width: 74px; height: 74px; margin: 0 auto 18px; border-radius: 24px;
+      background: linear-gradient(135deg, #2563eb 0%, #38bdf8 100%);
+      display: grid; place-items: center; font-size: 34px;
+      box-shadow: 0 10px 30px rgba(37, 99, 235, 0.45);
     }
     .google-btn {
-      width: 100%; padding: 14px; border: none; border-radius: 16px; font-size: 16px;
-      font-weight: 600; cursor: pointer; background: white; color: #111;
-      display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 22px;
+      width: 100%; padding: 15px; border: none; border-radius: 16px; font-size: 15px;
+      font-weight: 600; cursor: pointer; background: #ffffff; color: #0f172a;
+      display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 26px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25); transition: transform 0.15s;
     }
+    .google-btn:hover { transform: translateY(-1px); }
+
+    /* MAIN SHELL */
+    #app {
+      width: 100%; max-width: 1200px; height: 100dvh; display: flex;
+      background: var(--navy-panel);
+      border-left: 1px solid var(--navy-border);
+      border-right: 1px solid var(--navy-border);
+      box-shadow: 0 0 60px rgba(0, 0, 0, 0.6);
+    }
+
+    /* LEFT SIDEBAR (WHATSAPP-STYLE CONTACTS & SEARCH) */
     #sidebar {
-      width: 340px; border-right: 1px solid var(--glass-border);
+      width: 360px; background: var(--navy-panel);
+      border-right: 1px solid var(--navy-border);
       display: flex; flex-direction: column; height: 100%;
     }
-    .top-bar {
-      padding: 16px; display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid var(--glass-border);
+    .sidebar-header {
+      padding: 14px 18px; background: var(--navy-header);
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid var(--navy-border);
     }
-    .user-pill { display: flex; align-items: center; gap: 10px; }
+    .me-info { display: flex; align-items: center; gap: 12px; }
     .avatar {
-      width: 40px; height: 40px; border-radius: 50%; object-fit: cover;
-      background: var(--accent); display: grid; place-items: center; font-weight: bold;
+      width: 44px; height: 44px; border-radius: 50%; object-fit: cover;
+      background: #1e3a8a; display: grid; place-items: center; font-weight: 700;
+      border: 2px solid rgba(56, 189, 248, 0.35); flex-shrink: 0;
     }
-    .icon-btn {
-      background: var(--glass); border: 1px solid var(--glass-border); color: var(--text);
-      padding: 8px 11px; border-radius: 12px; cursor: pointer; font-size: 14px;
+    .search-box {
+      padding: 10px 14px; background: var(--navy-panel);
+      border-bottom: 1px solid var(--navy-border);
     }
-    .icon-btn.recording {
-      background: #ef4444; border-color: #ef4444; color: white; animation: pulse 1s infinite;
+    .search-box input {
+      width: 100%; padding: 10px 14px; border-radius: 12px;
+      border: 1px solid var(--navy-border); background: var(--navy-deep);
+      color: var(--text-main); font-size: 13px; outline: none;
     }
-    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-    .section-label {
-      padding: 12px 16px 6px; font-size: 11px; text-transform: uppercase;
-      letter-spacing: 1px; color: var(--muted);
+    .nav-pills {
+      display: flex; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--navy-border);
     }
-    #user-list { flex: 1; overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
-    .contact-card {
-      display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 16px;
-      background: var(--glass); border: 1px solid transparent; cursor: pointer; transition: 0.2s;
+    .pill {
+      padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      background: var(--navy-elevated); color: var(--text-muted); border: none; cursor: pointer;
     }
-    .contact-card:hover, .contact-card.active {
-      border-color: rgba(0, 210, 255, 0.45); background: rgba(255,255,255,0.1);
+    .pill.active { background: #2563eb; color: white; }
+
+    #user-list { flex: 1; overflow-y: auto; }
+    .contact-row {
+      display: flex; align-items: center; gap: 13px; padding: 13px 18px;
+      border-bottom: 1px solid rgba(148, 185, 255, 0.06);
+      cursor: pointer; transition: background 0.15s;
     }
-    .status-dot {
-      width: 10px; height: 10px; border-radius: 50%; background: #4b5563; margin-left: auto;
+    .contact-row:hover { background: rgba(30, 58, 138, 0.25); }
+    .contact-row.active { background: rgba(37, 99, 235, 0.28); }
+    .contact-meta { flex: 1; min-width: 0; }
+    .contact-name { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .contact-sub { font-size: 12px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+    .status-dot { width: 10px; height: 10px; border-radius: 50%; background: #475569; flex-shrink: 0; }
+    .status-dot.online { background: var(--online-green); box-shadow: 0 0 8px var(--online-green); }
+
+    /* RIGHT CHAT WORKSPACE */
+    #chat-stage {
+      flex: 1; display: flex; flex-direction: column; height: 100%;
+      background-color: #071022;
+      background-image: radial-gradient(rgba(56, 189, 248, 0.06) 1px, transparent 1px);
+      background-size: 22px 22px;
     }
-    .status-dot.online { background: #10b981; box-shadow: 0 0 10px #10b981; }
-    #chat-stage { flex: 1; display: flex; flex-direction: column; height: 100%; }
+    #empty-state { margin: auto; text-align: center; max-width: 340px; padding: 24px; }
     #chat-header {
-      padding: 14px 18px; border-bottom: 1px solid var(--glass-border);
-      display: flex; align-items: center; gap: 12px; background: rgba(0,0,0,0.2);
+      padding: 12px 20px; background: var(--navy-header);
+      border-bottom: 1px solid var(--navy-border);
+      display: flex; align-items: center; gap: 13px;
     }
     #back-btn { display: none; }
-    #messages {
-      flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 10px;
+    .tool-btn {
+      background: var(--navy-elevated); border: 1px solid var(--navy-border);
+      color: var(--text-main); width: 38px; height: 38px; border-radius: 12px;
+      display: grid; place-items: center; cursor: pointer; font-size: 16px; transition: 0.15s;
     }
-    .msg-wrap { display: flex; flex-direction: column; max-width: 76%; }
+    .tool-btn:hover { background: #1e3a8a; border-color: var(--gold-accent); }
+    .tool-btn.danger { background: #dc2626; border-color: #ef4444; color: white; }
+
+    /* MESSAGES FEED */
+    #messages {
+      flex: 1; overflow-y: auto; padding: 20px 24px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .msg-wrap { display: flex; flex-direction: column; max-width: 72%; }
     .msg-wrap.mine { align-self: flex-end; align-items: flex-end; }
     .msg-wrap.theirs { align-self: flex-start; align-items: flex-start; }
     .bubble {
-      padding: 10px 14px; border-radius: 18px; font-size: 15px; line-height: 1.4;
-      word-break: break-word; position: relative;
+      padding: 10px 14px; border-radius: 16px; font-size: 14.5px; line-height: 1.45;
+      word-break: break-word; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
     }
-    .mine .bubble { background: var(--accent); color: white; border-bottom-right-radius: 4px; }
-    .theirs .bubble {
-      background: var(--glass); border: 1px solid var(--glass-border);
-      color: var(--text); border-bottom-left-radius: 4px;
-    }
-    .chat-media {
-      max-width: 240px; max-height: 280px; border-radius: 12px; display: block; margin-bottom: 4px;
-    }
-    audio.chat-audio { max-width: 220px; height: 36px; display: block; }
+    .mine .bubble { background: var(--bubble-mine); color: white; border-top-right-radius: 4px; }
+    .theirs .bubble { background: var(--bubble-theirs); border: 1px solid var(--navy-border); color: var(--text-main); border-top-left-radius: 4px; }
+    .chat-media { max-width: 260px; max-height: 300px; border-radius: 12px; display: block; margin-bottom: 4px; cursor: pointer; }
+    audio.chat-audio { width: 230px; height: 38px; display: block; }
     .deleted-msg { font-style: italic; opacity: 0.65; }
-    .meta-row { font-size: 11px; color: var(--muted); margin-top: 3px; display: flex; gap: 8px; }
-    .msg-actions span { cursor: pointer; text-decoration: underline; margin-left: 6px; }
-    #typing-bar { padding: 0 18px 6px; font-size: 12px; color: #38bdf8; min-height: 20px; }
-    #form {
-      display: flex; align-items: center; gap: 8px; padding: 12px 14px;
-      border-top: 1px solid var(--glass-border); background: rgba(0,0,0,0.25);
+    .meta-row { font-size: 11px; color: var(--text-muted); margin-top: 3px; display: flex; align-items: center; gap: 8px; }
+    .msg-actions span { cursor: pointer; opacity: 0.8; }
+    .msg-actions span:hover { text-decoration: underline; opacity: 1; }
+
+    #typing-bar { padding: 4px 24px; font-size: 12px; color: var(--gold-accent); min-height: 22px; }
+
+    /* VOICE NOTE PREVIEW BAR (BEFORE SENDING) */
+    #vn-preview-bar {
+      display: none; align-items: center; gap: 10px; padding: 10px 18px;
+      background: var(--navy-elevated); border-top: 1px solid var(--navy-border);
+    }
+    #vn-preview-bar audio { flex: 1; height: 36px; }
+
+    /* COMPOSER BAR */
+    #composer {
+      display: flex; align-items: center; gap: 8px; padding: 12px 16px;
+      background: var(--navy-header); border-top: 1px solid var(--navy-border);
     }
     #input {
-      flex: 1; padding: 11px 15px; border-radius: 20px; border: 1px solid var(--glass-border);
-      background: var(--glass); color: white; font-size: 15px; outline: none; min-width: 0;
+      flex: 1; padding: 12px 16px; border-radius: 22px;
+      border: 1px solid var(--navy-border); background: var(--navy-deep);
+      color: white; font-size: 14.5px; outline: none; min-width: 0;
     }
-    #send-btn {
-      padding: 11px 18px; border: none; border-radius: 20px; background: var(--accent);
-      color: white; font-weight: bold; font-size: 14px; cursor: pointer;
+    .send-primary {
+      padding: 0 20px; height: 42px; border: none; border-radius: 21px;
+      background: linear-gradient(135deg, #2563eb 0%, #0284c7 100%);
+      color: white; font-weight: 600; font-size: 14px; cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
     }
-    #empty-state { margin: auto; text-align: center; color: var(--muted); padding: 20px; }
-    @media (max-width: 720px) {
+
+    /* PREMIUM CAMERA & MEDIA EDITOR STUDIO MODAL */
+    #studio-modal {
+      display: none; position: fixed; inset: 0; background: rgba(4, 9, 20, 0.94);
+      z-index: 999; flex-direction: column; align-items: center; justify-content: center; padding: 16px;
+    }
+    .studio-card {
+      width: 100%; max-width: 520px; background: var(--navy-panel);
+      border: 1px solid var(--navy-border); border-radius: 24px; overflow: hidden;
+      box-shadow: 0 25px 70px rgba(0,0,0,0.8); display: flex; flex-direction: column;
+    }
+    .studio-top {
+      padding: 12px 16px; background: var(--navy-header);
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    }
+    #cam-select {
+      flex: 1; padding: 7px 10px; border-radius: 10px; background: var(--navy-deep);
+      color: white; border: 1px solid var(--navy-border); font-size: 12px;
+    }
+    .studio-stage {
+      position: relative; width: 100%; height: 340px; background: #020617;
+      display: grid; place-items: center; overflow: hidden;
+    }
+    #cam-live, #edit-canvas, #edit-video-preview {
+      width: 100%; height: 100%; object-fit: contain;
+    }
+    .studio-tools {
+      padding: 12px 16px; background: var(--navy-header);
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .filter-row { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; }
+    .chip {
+      padding: 6px 12px; border-radius: 14px; border: 1px solid var(--navy-border);
+      background: var(--navy-deep); color: var(--text-main); font-size: 12px; cursor: pointer; white-space: nowrap;
+    }
+    .chip.active { background: #2563eb; border-color: #38bdf8; }
+    .studio-actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    #caption-input {
+      flex: 1; padding: 10px 14px; border-radius: 14px; border: 1px solid var(--navy-border);
+      background: var(--navy-deep); color: white; font-size: 13px; outline: none;
+    }
+
+    @media (max-width: 760px) {
       #sidebar { width: 100%; }
       #chat-stage { display: none; width: 100%; }
       #app.in-chat #sidebar { display: none; }
       #app.in-chat #chat-stage { display: flex; }
-      #back-btn { display: inline-block; }
+      #back-btn { display: grid; }
     }
   </style>
 </head>
 <body>
+  <!-- LOGIN -->
   <div id="login-screen">
-    <div class="logo-orb">⚡</div>
-    <h2 style="margin:0 0 8px;">Super Messenger</h2>
-    <p style="margin:0;color:var(--muted);font-size:14px;">Next-gen private chats, live presence & creator statuses.</p>
+    <div class="brand-badge">⚡</div>
+    <h2 style="margin:0 0 8px;font-size:24px;">Super Messenger</h2>
+    <p style="margin:0;color:var(--text-muted);font-size:14px;line-height:1.5;">
+      Premium private messaging, studio media editing & real-time voice notes.
+    </p>
     <button class="google-btn" id="google-login-btn">
-      <span>G</span> Continue with Google (Gmail)
+      <strong>G</strong> Continue with Google (Gmail)
     </button>
   </div>
 
+  <!-- APP SHELL -->
   <div id="app" style="display:none;">
     <div id="sidebar">
-      <div class="top-bar">
-        <div class="user-pill">
+      <div class="sidebar-header">
+        <div class="me-info">
           <img id="me-avatar" class="avatar" src="" alt="" />
           <div>
-            <div id="me-name" style="font-weight:600;font-size:14px;">Loading...</div>
-            <div style="font-size:11px;color:#10b981;">● Online</div>
+            <div id="me-name" style="font-weight:700;font-size:14.5px;">Loading...</div>
+            <div style="font-size:11.5px;color:var(--online-green);">● Active now</div>
           </div>
         </div>
-        <div style="display:flex;gap:6px;">
-          <button class="icon-btn" id="theme-btn" title="Switch Theme">🎨</button>
-          <button class="icon-btn" id="logout-btn" title="Sign Out">Exit</button>
-        </div>
+        <button class="tool-btn" id="logout-btn" title="Sign Out" style="width:auto;padding:0 12px;font-size:12px;">Sign Out</button>
       </div>
-      <div class="section-label">People on Super Messenger</div>
+      <div class="search-box">
+        <input id="search-users" placeholder="Search contacts by name or Gmail..." />
+      </div>
+      <div class="nav-pills">
+        <button class="pill active">All Chats</button>
+        <button class="pill" onclick="alert('Online filter active')">Online</button>
+      </div>
       <div id="user-list"></div>
     </div>
 
     <div id="chat-stage">
       <div id="empty-state">
-        <div style="font-size:40px;margin-bottom:10px;">💬</div>
-        <div>Select anyone on the left to start an encrypted private chat</div>
+        <div style="font-size:48px;margin-bottom:12px;">💬</div>
+        <h3 style="margin:0 0 6px;">Super Messenger Web</h3>
+        <p style="margin:0;color:var(--text-muted);font-size:13.5px;">
+          Select a contact on the left to start an encrypted conversation, record voice notes, or capture studio photos.
+        </p>
       </div>
 
       <div id="active-chat" style="display:none;flex-direction:column;height:100%;">
         <div id="chat-header">
-          <button class="icon-btn" id="back-btn">←</button>
+          <button class="tool-btn" id="back-btn">←</button>
           <img id="peer-avatar" class="avatar" src="" alt="" />
           <div>
-            <div id="peer-name" style="font-weight:600;">User</div>
-            <div id="peer-status" style="font-size:12px;color:var(--muted);">Offline</div>
+            <div id="peer-name" style="font-weight:700;font-size:15px;">User</div>
+            <div id="peer-status" style="font-size:12px;color:var(--text-muted);">Offline</div>
           </div>
-          <button class="icon-btn" id="love-tap-btn" style="margin-left:auto;" title="Send Vibe Pulse">✨ Pulse</button>
+          <div style="margin-left:auto;display:flex;gap:8px;">
+            <button class="tool-btn" id="love-tap-btn" title="Send Vibe Pulse">✨</button>
+          </div>
         </div>
+
         <div id="messages"></div>
         <div id="typing-bar"></div>
-        <form id="form">
+
+        <!-- VOICE NOTE PREVIEW BEFORE SENDING -->
+        <div id="vn-preview-bar">
+          <button type="button" class="tool-btn danger" id="vn-discard-btn" title="Discard Voice Note">🗑</button>
+          <audio id="vn-audio-player" controls></audio>
+          <button type="button" class="send-primary" id="vn-send-btn">Send VN ➤</button>
+        </div>
+
+        <!-- MAIN COMPOSER -->
+        <form id="composer">
           <input type="file" id="media-picker" accept="image/*,video/*" style="display:none;" />
-          <button type="button" class="icon-btn" id="attach-btn" title="Send Photo or Video">📎</button>
-          <button type="button" class="icon-btn" id="voice-btn" title="Record Voice Note">🎤</button>
-          <input id="input" autocomplete="off" placeholder="Write a message..." />
-          <button id="send-btn">Send</button>
+          <button type="button" class="tool-btn" id="attach-btn" title="Gallery Photo/Video">📎</button>
+          <button type="button" class="tool-btn" id="camera-btn" title="Open Selfie & Video Camera">📷</button>
+          <button type="button" class="tool-btn" id="voice-btn" title="Record Voice Note">🎤</button>
+          <input id="input" autocomplete="off" placeholder="Type a message..." />
+          <button type="submit" class="send-primary" id="send-btn">Send ➤</button>
         </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAMERA & STUDIO EDITOR MODAL -->
+  <div id="studio-modal">
+    <div class="studio-card">
+      <div class="studio-top">
+        <select id="cam-select" title="Choose Physical Webcam"></select>
+        <button type="button" class="tool-btn" id="studio-close-btn" title="Close">✕</button>
+      </div>
+
+      <div class="studio-stage">
+        <video id="cam-live" autoplay playsinline muted></video>
+        <canvas id="edit-canvas" style="display:none;"></canvas>
+        <video id="edit-video-preview" controls style="display:none;"></video>
+      </div>
+
+      <!-- CAPTURE CONTROLS -->
+      <div class="studio-tools" id="capture-controls">
+        <div class="studio-actions" style="justify-content:center;">
+          <button type="button" class="tool-btn" id="cam-flip-btn" title="Flip Front/Back">🔄</button>
+          <button type="button" class="send-primary" id="snap-photo-btn">📸 Snap Photo</button>
+          <button type="button" class="send-primary" id="rec-video-btn" style="background:#dc2626;">🔴 Record Video</button>
+        </div>
+      </div>
+
+      <!-- PREVIEW & EDIT CONTROLS (BEFORE SENDING) -->
+      <div class="studio-tools" id="editor-controls" style="display:none;">
+        <div class="filter-row" id="photo-filters">
+          <button type="button" class="chip active" data-filter="none">Original</button>
+          <button type="button" class="chip" data-filter="contrast(1.25) saturate(1.3)">Vivid</button>
+          <button type="button" class="chip" data-filter="grayscale(1) contrast(1.2)">Noir B&W</button>
+          <button type="button" class="chip" data-filter="sepia(0.45) brightness(1.05)">Warm Gold</button>
+          <button type="button" class="chip" data-filter="hue-rotate(190deg) saturate(1.4)">Cyber Blue</button>
+          <button type="button" class="chip" id="rotate-btn">↻ Rotate 90°</button>
+        </div>
+        <div class="studio-actions">
+          <button type="button" class="tool-btn" id="retake-btn" title="Retake">↺</button>
+          <input id="caption-input" placeholder="Add a caption or overlay text..." />
+          <button type="button" class="send-primary" id="studio-send-btn">Send ➤</button>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
     let sb, socket, session, me, activeConvoId = null, activePeer = null, typingTimeout;
-    let mediaRecorder = null, audioChunks = [];
+    let allUsers = [];
+    let vnRecorder = null, vnChunks = [], vnTimer = null, vnSeconds = 0, pendingVnBlob = null;
+    let camStream = null, vidRecorder = null, vidChunks = [], useFrontCam = true;
+    let capturedImg = null, currentFilter = 'none', rotationDeg = 0, pendingMediaBlob = null, pendingMediaName = '';
 
     async function boot() {
       const btn = document.getElementById('google-login-btn');
@@ -232,9 +400,9 @@
       document.getElementById('me-name').textContent = me.user_metadata?.full_name || me.email;
       document.getElementById('me-avatar').src = me.user_metadata?.avatar_url || '';
 
-      document.getElementById('theme-btn').onclick = () => document.body.classList.toggle('theme-rose');
       document.getElementById('logout-btn').onclick = async () => { await sb.auth.signOut(); location.reload(); };
       document.getElementById('back-btn').onclick = () => document.getElementById('app').classList.remove('in-chat');
+      document.getElementById('search-users').oninput = (e) => renderUserList(e.target.value.toLowerCase());
 
       socket = io({ auth: { token: session.access_token } });
 
@@ -269,69 +437,296 @@
 
       socket.on('typing', ({ conversationId, userId, isTyping }) => {
         if (conversationId === activeConvoId && userId !== me.id) {
-          document.getElementById('typing-bar').textContent = isTyping ? 'Typing...' : '';
+          document.getElementById('typing-bar').textContent = isTyping ? 'typing...' : '';
         }
       });
 
       socket.on('haptic:tap', ({ conversationId }) => {
         if (conversationId === activeConvoId) {
           if (navigator.vibrate) navigator.vibrate(200);
-          document.body.style.boxShadow = 'inset 0 0 60px rgba(0, 210, 255, 0.6)';
+          document.body.style.boxShadow = 'inset 0 0 70px rgba(56, 189, 248, 0.5)';
           setTimeout(() => document.body.style.boxShadow = 'none', 500);
         }
       });
 
-      setupMediaControls();
+      setupVoiceRecorder();
+      setupCameraAndEditor();
       loadUsers();
     }
 
-    function setupMediaControls() {
-      const attachBtn = document.getElementById('attach-btn');
-      const picker = document.getElementById('media-picker');
+    // 1. VOICE NOTE RECORDER WITH PREVIEW BEFORE SENDING
+    function setupVoiceRecorder() {
       const voiceBtn = document.getElementById('voice-btn');
-
-      attachBtn.onclick = () => {
-        if (!activeConvoId) return;
-        picker.click();
-      };
-
-      picker.onchange = async () => {
-        const file = picker.files[0];
-        if (!file || !activeConvoId) return;
-        await uploadAndSendFile(file, file.name);
-        picker.value = '';
-      };
+      const vnBar = document.getElementById('vn-preview-bar');
+      const vnPlayer = document.getElementById('vn-audio-player');
 
       voiceBtn.onclick = async () => {
         if (!activeConvoId) return;
-        if (mediaRecorder && mediaRecorder.state === 'recording') {
-          mediaRecorder.stop();
-          voiceBtn.classList.remove('recording');
+        if (vnRecorder && vnRecorder.state === 'recording') {
+          vnRecorder.stop();
+          clearInterval(vnTimer);
+          voiceBtn.classList.remove('danger');
           voiceBtn.textContent = '🎤';
           return;
         }
         try {
           const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          audioChunks = [];
-          mediaRecorder = new MediaRecorder(stream);
-          mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) audioChunks.push(e.data); };
-          mediaRecorder.onstop = async () => {
+          vnChunks = [];
+          vnSeconds = 0;
+          vnRecorder = new MediaRecorder(stream);
+          vnRecorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) vnChunks.push(e.data); };
+          vnRecorder.onstop = () => {
             stream.getTracks().forEach(t => t.stop());
-            const blob = new Blob(audioChunks, { type: 'audio/webm' });
-            await uploadAndSendFile(blob, 'voice-note.webm');
+            pendingVnBlob = new Blob(vnChunks, { type: 'audio/webm' });
+            vnPlayer.src = URL.createObjectURL(pendingVnBlob);
+            vnBar.style.display = 'flex';
           };
-          mediaRecorder.start();
-          voiceBtn.classList.add('recording');
+          vnRecorder.start(200);
+          voiceBtn.classList.add('danger');
           voiceBtn.textContent = '⏹';
+          vnTimer = setInterval(() => {
+            vnSeconds++;
+            document.getElementById('typing-bar').textContent = `Recording voice note... ${vnSeconds}s (tap ⏹ to preview)`;
+          }, 1000);
         } catch (err) {
-          alert('Microphone access blocked or unavailable: ' + err.message);
+          alert('Microphone blocked: ' + err.message);
         }
+      };
+
+      document.getElementById('vn-discard-btn').onclick = () => {
+        pendingVnBlob = null;
+        vnPlayer.src = '';
+        vnBar.style.display = 'none';
+        document.getElementById('typing-bar').textContent = '';
+      };
+
+      document.getElementById('vn-send-btn').onclick = async () => {
+        if (!pendingVnBlob) return;
+        vnBar.style.display = 'none';
+        await uploadAndSendMedia(pendingVnBlob, 'voice-note.webm', '');
+        pendingVnBlob = null;
       };
     }
 
-    async function uploadAndSendFile(fileBlob, filename) {
+    // 2. CAMERA & STUDIO EDITOR WITH PREVIEW BEFORE SENDING
+    function setupCameraAndEditor() {
+      const modal = document.getElementById('studio-modal');
+      const liveVid = document.getElementById('cam-live');
+      const canvas = document.getElementById('edit-canvas');
+      const vidPreview = document.getElementById('edit-video-preview');
+      const camSelect = document.getElementById('cam-select');
+      const picker = document.getElementById('media-picker');
+
+      document.getElementById('attach-btn').onclick = () => {
+        if (!activeConvoId) return;
+        picker.click();
+      };
+
+      picker.onchange = () => {
+        const file = picker.files[0];
+        if (!file) return;
+        modal.style.display = 'flex';
+        stopCameraStream();
+        if (file.type.startsWith('image/')) {
+          const img = new Image();
+          img.onload = () => enterPhotoEditor(img);
+          img.src = URL.createObjectURL(file);
+        } else {
+          pendingMediaBlob = file;
+          pendingMediaName = file.name;
+          enterVideoEditor(URL.createObjectURL(file));
+        }
+        picker.value = '';
+      };
+
+      document.getElementById('camera-btn').onclick = async () => {
+        if (!activeConvoId) return;
+        modal.style.display = 'flex';
+        resetToLiveCamera();
+        await startCamera();
+      };
+
+      camSelect.onchange = () => startCamera(camSelect.value);
+
+      document.getElementById('cam-flip-btn').onclick = () => {
+        useFrontCam = !useFrontCam;
+        startCamera();
+      };
+
+      document.getElementById('snap-photo-btn').onclick = () => {
+        if (!liveVid.videoWidth) return alert('Camera frame not ready yet—try selecting another camera in the top dropdown.');
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = liveVid.videoWidth;
+        tempCanvas.height = liveVid.videoHeight;
+        tempCanvas.getContext('2d').drawImage(liveVid, 0, 0);
+        const img = new Image();
+        img.onload = () => {
+          stopCameraStream();
+          enterPhotoEditor(img);
+        };
+        img.src = tempCanvas.toDataURL('image/jpeg', 0.92);
+      };
+
+      const recVidBtn = document.getElementById('rec-video-btn');
+      recVidBtn.onclick = () => {
+        if (vidRecorder && vidRecorder.state === 'recording') {
+          vidRecorder.stop();
+          recVidBtn.textContent = '🔴 Record Video';
+          return;
+        }
+        if (!camStream) return;
+        vidChunks = [];
+        vidRecorder = new MediaRecorder(camStream);
+        vidRecorder.ondataavailable = (e) => { if (e.data && e.data.size > 0) vidChunks.push(e.data); };
+        vidRecorder.onstop = () => {
+          pendingMediaBlob = new Blob(vidChunks, { type: 'video/webm' });
+          pendingMediaName = 'camera-video.webm';
+          stopCameraStream();
+          enterVideoEditor(URL.createObjectURL(pendingMediaBlob));
+        };
+        vidRecorder.start(200);
+        recVidBtn.textContent = '⏹ Stop Video';
+      };
+
+      document.querySelectorAll('#photo-filters .chip[data-filter]').forEach(chip => {
+        chip.onclick = () => {
+          document.querySelectorAll('#photo-filters .chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          currentFilter = chip.dataset.filter;
+          redrawEditedCanvas();
+        };
+      });
+
+      document.getElementById('rotate-btn').onclick = () => {
+        rotationDeg = (rotationDeg + 90) % 360;
+        redrawEditedCanvas();
+      };
+
+      document.getElementById('caption-input').oninput = () => {
+        if (capturedImg) redrawEditedCanvas();
+      };
+
+      document.getElementById('retake-btn').onclick = async () => {
+        resetToLiveCamera();
+        await startCamera(camSelect.value);
+      };
+
+      document.getElementById('studio-close-btn').onclick = () => {
+        stopCameraStream();
+        modal.style.display = 'none';
+      };
+
+      document.getElementById('studio-send-btn').onclick = async () => {
+        const caption = document.getElementById('caption-input').value.trim();
+        modal.style.display = 'none';
+        if (capturedImg) {
+          canvas.toBlob(async (blob) => {
+            await uploadAndSendMedia(blob, 'edited-photo.jpg', caption);
+          }, 'image/jpeg', 0.9);
+        } else if (pendingMediaBlob) {
+          await uploadAndSendMedia(pendingMediaBlob, pendingMediaName, caption);
+        }
+      };
+
+      async function startCamera(deviceId) {
+        stopCameraStream();
+        try {
+          const constraints = deviceId
+            ? { video: { deviceId: { exact: deviceId } }, audio: true }
+            : { video: { facingMode: useFrontCam ? 'user' : 'environment' }, audio: true };
+          camStream = await navigator.mediaDevices.getUserMedia(constraints);
+          liveVid.srcObject = camStream;
+          await liveVid.play();
+
+          const devices = await navigator.mediaDevices.enumerateDevices();
+          const videoInputs = devices.filter(d => d.kind === 'videoinput');
+          camSelect.innerHTML = '';
+          videoInputs.forEach((d, idx) => {
+            const opt = document.createElement('option');
+            opt.value = d.deviceId;
+            opt.textContent = d.label || `Camera ${idx + 1}`;
+            if (camStream.getVideoTracks()[0]?.getSettings().deviceId === d.deviceId) opt.selected = true;
+            camSelect.appendChild(opt);
+          });
+        } catch (err) {
+          alert('Camera error: ' + err.message);
+        }
+      }
+
+      function stopCameraStream() {
+        if (camStream) {
+          camStream.getTracks().forEach(t => t.stop());
+          camStream = null;
+        }
+      }
+
+      function resetToLiveCamera() {
+        capturedImg = null;
+        pendingMediaBlob = null;
+        currentFilter = 'none';
+        rotationDeg = 0;
+        document.getElementById('caption-input').value = '';
+        liveVid.style.display = 'block';
+        canvas.style.display = 'none';
+        vidPreview.style.display = 'none';
+        document.getElementById('capture-controls').style.display = 'flex';
+        document.getElementById('editor-controls').style.display = 'none';
+      }
+
+      function enterPhotoEditor(img) {
+        capturedImg = img;
+        currentFilter = 'none';
+        rotationDeg = 0;
+        liveVid.style.display = 'none';
+        vidPreview.style.display = 'none';
+        canvas.style.display = 'block';
+        document.getElementById('capture-controls').style.display = 'none';
+        document.getElementById('editor-controls').style.display = 'flex';
+        document.getElementById('photo-filters').style.display = 'flex';
+        redrawEditedCanvas();
+      }
+
+      function enterVideoEditor(url) {
+        capturedImg = null;
+        liveVid.style.display = 'none';
+        canvas.style.display = 'none';
+        vidPreview.style.display = 'block';
+        vidPreview.src = url;
+        document.getElementById('capture-controls').style.display = 'none';
+        document.getElementById('editor-controls').style.display = 'flex';
+        document.getElementById('photo-filters').style.display = 'none';
+      }
+
+      function redrawEditedCanvas() {
+        if (!capturedImg) return;
+        const ctx = canvas.getContext('2d');
+        const swap = rotationDeg === 90 || rotationDeg === 270;
+        canvas.width = swap ? capturedImg.height : capturedImg.width;
+        canvas.height = swap ? capturedImg.width : capturedImg.height;
+
+        ctx.save();
+        ctx.filter = currentFilter;
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate((rotationDeg * Math.PI) / 180);
+        ctx.drawImage(capturedImg, -capturedImg.width / 2, -capturedImg.height / 2);
+        ctx.restore();
+
+        const overlayText = document.getElementById('caption-input').value.trim();
+        if (overlayText) {
+          const fontSize = Math.max(24, Math.round(canvas.width * 0.045));
+          ctx.font = `bold ${fontSize}px sans-serif`;
+          ctx.textAlign = 'center';
+          ctx.fillStyle = 'rgba(6, 13, 31, 0.72)';
+          ctx.fillRect(0, canvas.height - fontSize * 2.1, canvas.width, fontSize * 1.7);
+          ctx.fillStyle = '#ffffff';
+          ctx.fillText(overlayText, canvas.width / 2, canvas.height - fontSize * 0.9);
+        }
+      }
+    }
+
+    async function uploadAndSendMedia(fileBlob, filename, captionText) {
       const typingBar = document.getElementById('typing-bar');
-      typingBar.textContent = 'Uploading media...';
+      typingBar.textContent = 'Sending media...';
       try {
         const formData = new FormData();
         formData.append('media', fileBlob, filename);
@@ -351,7 +746,7 @@
             msgType: res.msgType,
             mediaUrl: res.url,
             mediaLiteUrl: res.liteUrl,
-            content: ''
+            content: captionText || ''
           });
         }
       } catch (err) {
@@ -362,30 +757,36 @@
     }
 
     async function loadUsers() {
-      const users = await fetch('/api/users', {
+      allUsers = await fetch('/api/users', {
         headers: { Authorization: `Bearer ${session.access_token}` }
       }).then(r => r.json());
+      renderUserList('');
+    }
 
+    function renderUserList(filter) {
       const list = document.getElementById('user-list');
       list.innerHTML = '';
-      (users || []).forEach(u => {
-        const card = document.createElement('div');
-        card.className = 'contact-card';
-        card.innerHTML = `
-          <img class="avatar" src="${u.avatar_url || ''}" onerror="this.style.display='none'" />
-          <div>
-            <div style="font-weight:600;font-size:14px;">${u.display_name || u.username}</div>
-            <div style="font-size:12px;color:var(--muted);">${u.email}</div>
-          </div>
-          <div id="dot-${u.id}" class="status-dot ${u.is_online ? 'online' : ''}"></div>
-        `;
-        card.onclick = () => openDirectChat(u);
-        list.appendChild(card);
-      });
+      (allUsers || [])
+        .filter(u => (u.display_name || u.username || '').toLowerCase().includes(filter) || (u.email || '').toLowerCase().includes(filter))
+        .forEach(u => {
+          const row = document.createElement('div');
+          row.className = `contact-row ${activePeer && activePeer.id === u.id ? 'active' : ''}`;
+          row.innerHTML = `
+            <img class="avatar" src="${u.avatar_url || ''}" onerror="this.style.display='none'" />
+            <div class="contact-meta">
+              <div class="contact-name">${u.display_name || u.username}</div>
+              <div class="contact-sub">${u.email}</div>
+            </div>
+            <div id="dot-${u.id}" class="status-dot ${u.is_online ? 'online' : ''}"></div>
+          `;
+          row.onclick = () => openDirectChat(u);
+          list.appendChild(row);
+        });
     }
 
     async function openDirectChat(peer) {
       activePeer = peer;
+      renderUserList(document.getElementById('search-users').value.toLowerCase());
       document.getElementById('app').classList.add('in-chat');
       document.getElementById('empty-state').style.display = 'none';
       document.getElementById('active-chat').style.display = 'flex';
@@ -483,7 +884,7 @@
       typingTimeout = setTimeout(() => socket.emit('typing', { conversationId: activeConvoId, isTyping: false }), 1200);
     });
 
-    document.getElementById('form').addEventListener('submit', (e) => {
+    document.getElementById('composer').addEventListener('submit', (e) => {
       e.preventDefault();
       const input = document.getElementById('input');
       if (!input.value.trim() || !activeConvoId) return;
@@ -500,3 +901,4 @@
   </script>
 </body>
 </html>
+
