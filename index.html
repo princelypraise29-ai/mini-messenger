@@ -15,9 +15,7 @@
   --border:rgba(15,23,42,.08);
   --hairline:rgba(255,255,255,.88);
 
-  /* Theme-driven primary & water-glass palette */
   --accent:#38a1b6;
-  --accent-deep:#092a33;
   --accent-soft:rgba(56,161,182,.14);
   --out:linear-gradient(135deg,rgba(122,208,224,.36),rgba(164,224,234,.28));
   --out-solid:rgba(132,211,226,.34);
@@ -30,7 +28,6 @@
   --in-text:#1e293b;
 
   --icon-tint:#2c6e7d;
-  --icon-muted:#5a7d87;
   --green:#16a34a;
   --blue:#0284c7;
   --gray-tick:#8e96a4;
@@ -49,7 +46,6 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 .ui-ico.danger{color:#b91c1c}
 .ui-ico.light{color:#ffffff}
 
-/* Login Screen */
 #login-screen{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(circle at 25% 15%,rgba(255,255,255,.95),transparent 52%),radial-gradient(circle at 80% 85%,var(--accent-soft),transparent 58%),linear-gradient(155deg,#f6f9fc 0%,#e7eef5 100%);z-index:50}
 .login-card{width:min(392px,100%);padding:40px 28px;text-align:center;background:rgba(255,255,255,.78);border:1px solid var(--border);box-shadow:inset 0 1px 0 var(--hairline),0 24px 64px rgba(15,23,42,.08);border-radius:30px;backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px)}
 .logo-badge{width:74px;height:74px;margin:0 auto 20px;border-radius:24px;background:var(--out);border:1px solid var(--out-border);display:grid;place-items:center;box-shadow:inset 0 1px 0 #fff,0 12px 28px rgba(15,23,42,.06)}
@@ -57,7 +53,6 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 .google-btn{width:100%;padding:15px;margin-top:26px;border:1px solid rgba(15,23,42,.1);border-radius:16px;background:rgba(255,255,255,.92);color:var(--text);font-weight:650;font-size:15px;box-shadow:0 6px 18px rgba(15,23,42,.06);transition:transform .14s,background .14s}
 .google-btn:hover{background:#fff}.google-btn:active{transform:scale(.98)}
 
-/* App Shell */
 #app{display:none;width:100%;max-width:1160px;height:100dvh;margin:auto;background:var(--bg);border-inline:1px solid var(--border);position:relative;box-shadow:0 0 80px rgba(15,23,42,.05)}
 #sidebar{width:365px;flex-shrink:0;background:var(--panel);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);border-right:1px solid var(--border);display:flex;flex-direction:column}
 .ios-nav{padding:14px 16px 12px;background:var(--bar);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);border-bottom:1px solid var(--border)}
@@ -73,7 +68,6 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 .search-box{width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:14px;background:rgba(255,255,255,.76);color:var(--text);outline:none;font-size:15px}
 .search-box:focus{background:#fff;border-color:var(--out-border)}
 
-/* Sidebar Contact List */
 #user-list{flex:1;overflow-y:auto}
 .chat-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid rgba(15,23,42,.05);cursor:pointer;transition:background .15s}
 .chat-row:hover{background:rgba(255,255,255,.65)}
@@ -98,7 +92,6 @@ button,input,textarea,select{font:inherit}button{cursor:pointer}
 @keyframes waWave{from{transform:scaleY(.35)}to{transform:scaleY(1.1)}}
 .live-activity{color:var(--icon-tint)!important;font-weight:600}
 
-/* Soft Diamond Chat Stage */
 #chat-stage{flex:1;min-width:0;height:100%;display:flex;flex-direction:column;background-color:var(--bg);background-image:
   linear-gradient(135deg,rgba(255,255,255,.62) 0%,transparent 45%),
   linear-gradient(225deg,var(--accent-soft) 0%,transparent 52%),
@@ -109,7 +102,6 @@ position:relative}
 #empty-state strong{display:block;color:var(--text);font-size:22px;margin:10px 0 6px}
 #active-chat{display:none;flex:1;min-height:0;flex-direction:column;position:relative}
 
-/* Header */
 #chat-header{padding:10px 14px;background:var(--bar);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;z-index:5}
 #back-btn{display:none;background:none;border:0;color:var(--icon-tint);font-size:17px;font-weight:600;padding:4px 4px}
 .peer-click-area{display:flex;align-items:center;gap:10px;flex:1;min-width:0;cursor:pointer}
@@ -120,7 +112,6 @@ position:relative}
 .header-toggle-pill{padding:5px 9px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.76);color:var(--icon-tint);font-size:11.5px;font-weight:650;display:inline-flex;align-items:center;gap:4px}
 .header-toggle-pill.active{background:var(--out-solid);border-color:var(--out-border);color:var(--out-text)}
 
-/* Multi-Pin Banner */
 #pinned-banner{display:none;align-items:center;gap:8px;padding:7px 12px;background:rgba(255,255,255,.86);backdrop-filter:blur(18px);border-bottom:1px solid var(--border);font-size:13px;z-index:4}
 #pinned-banner .pin-bar{width:3.5px;height:30px;border-radius:2px;background:var(--accent);flex-shrink:0}
 #pinned-banner .pin-body{flex:1;min-width:0;cursor:pointer}
@@ -128,7 +119,6 @@ position:relative}
 #pinned-banner .pin-text{color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pin-nav-btn{background:rgba(255,255,255,.8);border:1px solid var(--border);border-radius:8px;color:var(--icon-tint);font-size:12px;padding:3px 7px}
 
-/* Message Stream */
 #messages{flex:1;overflow-y:auto;overflow-x:hidden;padding:14px 16px 18px;display:flex;flex-direction:column;gap:8px;scroll-behavior:smooth}
 .msg-row{display:flex;flex-direction:column;max-width:min(78%,500px);position:relative;touch-action:pan-y;transition:transform .2s cubic-bezier(.22,1,.36,1)}
 .msg-row.swiping{transition:none}
@@ -139,7 +129,6 @@ position:relative}
 .swipe-reply-icon{position:absolute;left:-36px;top:50%;transform:translateY(-50%) scale(.6);width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.88);border:1px solid var(--border);color:var(--icon-tint);display:grid;place-items:center;opacity:0;pointer-events:none;transition:opacity .14s,transform .14s}
 .msg-row.swipe-ready .swipe-reply-icon{opacity:1;transform:translateY(-50%) scale(1.05);background:var(--accent);color:#fff}
 
-/* Bubbles */
 .bubble{position:relative;padding:8px 12px 7px;border-radius:18px;font-size:15.5px;line-height:1.42;word-break:break-word;min-width:68px;user-select:text;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
 .mine .bubble{background:var(--out);color:var(--out-text);border:1px solid var(--out-border);border-bottom-right-radius:5px;box-shadow:inset 0 1px 0 rgba(255,255,255,.72),0 4px 14px var(--accent-soft)}
 .theirs .bubble{background:var(--in);color:var(--in-text);border:1px solid var(--in-border);border-bottom-left-radius:5px;box-shadow:inset 0 1px 0 rgba(255,255,255,.90),0 4px 12px rgba(100,116,139,.06)}
@@ -164,7 +153,6 @@ position:relative}
 
 .reaction-pill{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;margin-top:-6px;margin-inline:8px;border-radius:12px;background:rgba(255,255,255,.92);border:1px solid var(--border);font-size:13px;box-shadow:0 4px 12px rgba(15,23,42,.08);z-index:2}
 
-/* Media Veil */
 .media-container{position:relative;border-radius:14px;overflow:hidden;background:#e2e8f0;margin-bottom:5px;min-height:132px;min-width:154px;display:grid;place-items:center}
 .chat-media{max-width:min(278px,72vw);max-height:330px;display:block;object-fit:cover;cursor:pointer}
 .wa-media-loader{position:absolute;inset:0;background:linear-gradient(110deg,rgba(238,243,248,.72) 25%,rgba(255,255,255,.85) 50%,rgba(238,243,248,.72) 75%);background-size:220% 100%;animation:diamondShimmer 1.5s linear infinite;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:center;z-index:3}
@@ -174,7 +162,6 @@ position:relative}
 @keyframes waSpin{to{transform:rotate(360deg)}}
 .wa-loader-center{color:#fff;font-size:13px;line-height:1}
 
-/* Voice Note Player */
 .vn-player{display:flex;align-items:center;gap:10px;min-width:225px;padding:3px 2px}
 .vn-play-btn{width:34px;height:34px;border:0;border-radius:50%;background:rgba(15,23,42,.10);color:var(--icon-tint);font-size:12px;display:grid;place-items:center;flex-shrink:0}
 .vn-bars{display:flex;align-items:center;gap:2.5px;height:26px;flex:1;cursor:pointer}
@@ -187,7 +174,6 @@ position:relative}
 .vn-avatar-badge img{width:100%;height:100%;border-radius:50%;object-fit:cover;background:#cbd5e1}
 .vn-mic-icon{position:absolute;bottom:-2px;left:-3px;width:16px;height:16px;background:var(--accent);color:#fff;border-radius:50%;display:grid;place-items:center}
 
-/* Reply & Voice Preview Bars */
 #reply-bar{display:none;align-items:center;gap:10px;padding:8px 14px;background:rgba(255,255,255,.88);backdrop-filter:blur(20px);border-top:1px solid var(--border);border-left:3.5px solid var(--accent)}
 .reply-bar-info{flex:1;min-width:0}
 .reply-bar-name{font-size:12px;font-weight:700;color:var(--icon-tint)}
@@ -197,12 +183,10 @@ position:relative}
 #vn-preview-bar{display:none;align-items:center;gap:8px;padding:9px 12px;background:rgba(255,255,255,.94);border-top:1px solid var(--border);flex-wrap:wrap}
 #vn-preview-audio{max-width:210px;flex:1;height:34px}
 
-/* `+` Attachment Menu */
 #attach-menu{display:none;position:absolute;left:12px;bottom:68px;width:186px;padding:7px;border-radius:18px;background:rgba(255,255,255,.94);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);border:1px solid var(--border);box-shadow:0 16px 38px rgba(15,23,42,.13);flex-direction:column;gap:2px;z-index:25}
 .attach-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border:0;border-radius:12px;background:transparent;color:var(--text);font-size:14px;font-weight:500;text-align:left;transition:background .12s}
 .attach-item:hover{background:var(--accent-soft)}
 
-/* Emoji Option Selector Bar + Drawer (with Sticker Maker) */
 #emoji-choice-bar{display:none;align-items:center;gap:8px;padding:8px 14px;background:rgba(252,253,255,.94);backdrop-filter:blur(22px);border-top:1px solid var(--border)}
 .choice-pill{padding:6px 14px;border-radius:14px;border:1px solid var(--border);background:rgba(255,255,255,.86);color:var(--text);font-size:13px;font-weight:600;transition:all .14s}
 .choice-pill.active{background:var(--out-solid);border-color:var(--out-border);color:var(--out-text)}
@@ -227,7 +211,6 @@ position:relative}
 .gif-card{padding:12px;border:1px solid var(--border);border-radius:14px;background:linear-gradient(135deg,rgba(255,255,255,.92),var(--accent-soft));text-align:left;display:flex;align-items:center;justify-content:space-between;gap:8px}
 .gif-tag{font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:6px;background:rgba(15,23,42,.08);color:var(--icon-tint)}
 
-/* Composer + Diamond-Water Sound Frequency Recording Bar */
 #composer{display:flex;align-items:center;gap:7px;padding:8px 11px calc(10px + env(safe-area-inset-bottom));background:var(--bar);backdrop-filter:blur(26px);-webkit-backdrop-filter:blur(26px);border-top:1px solid var(--border);z-index:5;position:relative}
 .composer-pill{flex:1;display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.84);border:1px solid var(--border);border-radius:22px;padding:4px 10px;min-width:0;box-shadow:inset 0 1px 0 #fff}
 .composer-pill input{flex:1;min-width:0;background:transparent;border:0;color:var(--text);font-size:16px;padding:7px 4px;outline:none}
@@ -247,7 +230,6 @@ position:relative}
 .circle-action-btn.send-mode{background:var(--accent);color:#fff;border-color:transparent}
 .circle-action-btn.recording{background:var(--out-solid);color:var(--out-text);border-color:var(--out-border)}
 
-/* Long-Press Spotlight Blur Overlay */
 #context-backdrop{display:none;position:fixed;inset:0;background:rgba(226,234,243,.62);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);z-index:40;flex-direction:column;align-items:center;justify-content:center;padding:18px;gap:12px;animation:waFocusIn .16s ease-out}
 @keyframes waFocusIn{from{opacity:0}to{opacity:1}}
 .ctx-react-strip{display:flex;align-items:center;gap:4px;padding:6px 12px;border-radius:26px;background:rgba(255,255,255,.95);border:1px solid var(--border);box-shadow:0 12px 30px rgba(15,23,42,.12);flex-wrap:wrap;justify-content:center;max-width:92vw}
@@ -260,7 +242,6 @@ position:relative}
 .ctx-menu-row:hover{background:var(--accent-soft)}
 .ctx-menu-row.danger{color:#b91c1c}
 
-/* Modals (Forward, Delete Choices, Sticker Creator, Profile, Theme Picker) */
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.38);backdrop-filter:blur(14px);z-index:46;align-items:center;justify-content:center;padding:18px}
 .modal-card{width:min(420px,100%);max-height:84dvh;background:rgba(255,255,255,.96);border:1px solid var(--border);border-radius:24px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 22px 54px rgba(15,23,42,.20)}
 .modal-head{padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);font-weight:700;gap:10px}
@@ -271,18 +252,15 @@ position:relative}
 .primary-btn{padding:11px 16px;border-radius:14px;border:0;background:var(--accent);color:#fff;font-weight:650;font-size:14.5px}
 .secondary-btn{padding:10px 14px;border-radius:13px;border:1px solid var(--border);background:#fff;color:var(--text);font-weight:600;font-size:14px}
 
-/* Profile Cover & Avatar */
 .profile-cover{height:124px;background:var(--out);border-radius:16px;position:relative;overflow:hidden;border:1px solid var(--out-border);display:grid;place-items:center}
 .profile-cover img{width:100%;height:100%;object-fit:cover}
 .profile-avatar-lg{width:76px;height:76px;border-radius:50%;object-fit:cover;border:3px solid #fff;box-shadow:0 8px 20px rgba(15,23,42,.15);background:#dce5ee;margin-top:-42px;position:relative;z-index:2}
 
-/* Theme Color Swatches */
 .swatch-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
 .swatch-btn{padding:10px 8px;border-radius:14px;border:1.5px solid var(--border);background:#fff;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--text)}
 .swatch-btn.active{border-color:var(--accent);background:var(--accent-soft)}
 .swatch-dot{width:28px;height:28px;border-radius:50%;border:2px solid #fff;box-shadow:0 4px 10px rgba(15,23,42,.16)}
 
-/* iPhone WhatsApp-Style Camera & Media Studio */
 #studio-modal{display:none;position:fixed;inset:0;background:var(--bg);z-index:35;flex-direction:column}
 .studio-top{padding:12px 16px;display:flex;align-items:center;justify-content:space-between;background:var(--bar);backdrop-filter:blur(22px);border-bottom:1px solid var(--border);gap:8px}
 .studio-top select{background:#fff;color:var(--text);border:1px solid var(--border);padding:7px 10px;border-radius:10px;max-width:170px;font-size:13px}
@@ -307,13 +285,11 @@ position:relative}
   #app.in-chat #chat-stage{display:flex}
   #back-btn{display:inline-flex}
   .msg-row{max-width:86%}
-  .header-toggle-pill span.hide-sm{display:none}
 }
 </style>
 </head>
 <body>
 
-<!-- Harmonized SVG Icon Set -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="ico-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round" stroke-linejoin="round">
     <rect x="9" y="2.5" width="6" height="11" rx="3"/>
@@ -426,7 +402,6 @@ position:relative}
         <button type="button" id="love-tap-btn" class="pill-btn" title="Send Pulse">◇</button>
       </header>
 
-      <!-- Multi-Pin Banner -->
       <div id="pinned-banner">
         <div class="pin-bar"></div>
         <div id="pinned-body" class="pin-body">
@@ -451,7 +426,6 @@ position:relative}
         <button id="reply-cancel-btn" title="Cancel Reply">✕</button>
       </div>
 
-      <!-- Voice Note Pause / Review / Resume / Send Bar -->
       <div id="vn-preview-bar">
         <audio id="vn-preview-audio" controls></audio>
         <button type="button" id="vn-resume-btn" class="secondary-btn" style="padding:7px 11px;font-size:12.5px">Resume</button>
@@ -461,7 +435,6 @@ position:relative}
         </button>
       </div>
 
-      <!-- `+` Menu: Files, Gallery, Camera, Location -->
       <div id="attach-menu">
         <button type="button" class="attach-item" data-pick="files">📁 <span>Files</span></button>
         <button type="button" class="attach-item" data-pick="gallery">🖼️ <span>Gallery</span></button>
@@ -469,14 +442,12 @@ position:relative}
         <button type="button" class="attach-item" data-pick="location">📍 <span>Location</span></button>
       </div>
 
-      <!-- Emoji Option Selector Bar -->
       <div id="emoji-choice-bar">
         <button type="button" class="choice-pill" data-open="emoji">Emoji</button>
         <button type="button" class="choice-pill" data-open="gif">GIF</button>
         <button type="button" class="choice-pill" data-open="sticker">Sticker</button>
       </div>
 
-      <!-- Opens only after clicking Emoji, GIF, or Sticker -->
       <div id="media-drawer">
         <div id="emoji-panel" style="display:none">
           <div class="emoji-top-row">
@@ -500,7 +471,6 @@ position:relative}
       <form id="composer">
         <button type="button" id="attach-btn" class="tool-icon" title="Attach">＋</button>
 
-        <!-- Sound Frequency Recording + Pause + Hands-Free Voice Chat Toggle -->
         <div id="freq-rec-bar">
           <span class="freq-pulse-ring"></span>
           <span id="freq-rec-time">0:00</span>
@@ -529,7 +499,6 @@ position:relative}
   </section>
 </main>
 
-<!-- Long-Press Spotlight Blur Menu -->
 <div id="context-backdrop">
   <div class="ctx-react-strip" id="ctx-react-strip">
     <button type="button" class="ctx-react-btn" data-emoji="❤️">❤️</button>
@@ -544,7 +513,6 @@ position:relative}
   <div class="ctx-menu-card" id="ctx-menu-card"></div>
 </div>
 
-<!-- Delete Scope Modal -->
 <div id="delete-modal" class="modal-overlay">
   <div class="modal-card" style="max-width:340px">
     <div class="modal-head">
@@ -555,7 +523,6 @@ position:relative}
   </div>
 </div>
 
-<!-- Forward Picker Modal -->
 <div id="forward-modal" class="modal-overlay">
   <div class="modal-card" style="max-width:360px">
     <div class="modal-head">
@@ -566,7 +533,6 @@ position:relative}
   </div>
 </div>
 
-<!-- Sticker Creator & Editor Modal -->
 <div id="sticker-maker-modal" class="modal-overlay">
   <div class="modal-card">
     <div class="modal-head">
@@ -591,7 +557,6 @@ position:relative}
   </div>
 </div>
 
-<!-- Profile Viewer & Editor Modal -->
 <div id="profile-modal" class="modal-overlay">
   <div class="modal-card">
     <div class="modal-head">
@@ -602,7 +567,6 @@ position:relative}
   </div>
 </div>
 
-<!-- Theme Color Picker Modal -->
 <div id="theme-modal" class="modal-overlay">
   <div class="modal-card">
     <div class="modal-head">
@@ -619,7 +583,6 @@ position:relative}
   </div>
 </div>
 
-<!-- iPhone WhatsApp-Style Camera & Media Studio -->
 <section id="studio-modal">
   <div class="studio-top">
     <strong>Camera &amp; Media</strong>
@@ -662,7 +625,6 @@ position:relative}
       </div>
     </div>
 
-    <!-- Scrollable bottom strip of existing photos/videos on device -->
     <div style="width:100%">
       <div class="field-label" style="margin-bottom:5px">Recent Gallery &amp; Device Media (Tap to Edit, Add Text or Send)</div>
       <div id="device-media-strip" class="strip-row"></div>
@@ -688,7 +650,7 @@ let forwardTargetMsg = null;
 let deviceMediaItems = [];
 
 let activityTimer = null, mediaRecorder = null, audioChunks = [], recordedVnBlob = null;
-let isVnPaused = false, handsFreeMode = false, autoPlayVn = false;
+let isVnPaused = false, shouldAutoSendVn = false, handsFreeMode = false, autoPlayVn = false;
 let silenceFrames = 0, speechDetectedInUtterance = false;
 let currentPlayingAudio = null;
 let audioCtx = null, analyser = null, freqRafId = null, recStartTime = 0, recTimerInterval = null;
@@ -697,7 +659,6 @@ let camStream = null, videoRecorder = null, videoChunks = [];
 let rawImageObj = null, currentFilter = 'none', currentEffect = 'none', currentRotation = 0, editedBlob = null, editedType = 'image';
 
 const $ = id => document.getElementById(id);
-const authHeaders = () => ({ Authorization: `Bearer ${session.access_token}` });
 
 const THEME_PRESETS = [
   { name: 'Aqua Glass', hex: '#38a1b6', out: 'rgba(132,211,226,.34)', outGrad: 'linear-gradient(135deg,rgba(122,208,224,.36),rgba(164,224,234,.28))', border: 'rgba(56,161,182,.30)', text: '#092a33', tint: '#2c6e7d' },
@@ -732,6 +693,50 @@ function applyThemeHex(hex, presetObj = null) {
   localStorage.setItem('sm_theme_hex', hex);
 }
 
+function getSafeCanvasColor(cssVarName, fallbackHex = '#38a1b6') {
+  const raw = getComputedStyle(document.documentElement).getPropertyValue(cssVarName).trim();
+  if (/^#[0-9a-fA-F]{6}$/.test(raw)) return raw;
+  if (/^#[0-9a-fA-F]{3}$/.test(raw)) {
+    return '#' + raw.slice(1).split('').map(c => c + c).join('');
+  }
+  if (/^rgba?\(/i.test(raw)) return raw;
+  return fallbackHex;
+}
+
+async function getFreshAccessToken() {
+  if (!sb) return session?.access_token || '';
+  const { data } = await sb.auth.getSession();
+  if (data?.session) {
+    session = data.session;
+    return session.access_token;
+  }
+  const { data: refreshed } = await sb.auth.refreshSession();
+  if (refreshed?.session) {
+    session = refreshed.session;
+    return session.access_token;
+  }
+  return '';
+}
+
+async function api(path, options = {}) {
+  const token = await getFreshAccessToken();
+  const response = await fetch(path, {
+    ...options,
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(options.headers || {})
+    }
+  });
+  const data = await response.json().catch(() => ({}));
+  if (response.status === 401) {
+    if (sb) await sb.auth.signOut();
+    location.reload();
+    throw new Error('Session expired. Please sign in again.');
+  }
+  if (!response.ok) throw new Error(data.error || `Request failed (${response.status})`);
+  return data;
+}
+
 function setActionButtonState(mode) {
   const btn = $('action-btn');
   btn.classList.remove('send-mode', 'recording');
@@ -744,16 +749,6 @@ function setActionButtonState(mode) {
   } else {
     btn.innerHTML = '<svg width="20" height="20"><use href="#ico-mic"/></svg>';
   }
-}
-
-async function api(path, options = {}) {
-  const response = await fetch(path, {
-    ...options,
-    headers: { ...authHeaders(), ...(options.headers || {}) }
-  });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data.error || `Request failed (${response.status})`);
-  return data;
 }
 
 function escapeHtml(value) {
@@ -867,7 +862,11 @@ async function boot() {
     if (error) throw error;
     if (data.session) await initApp(data.session);
     sb.auth.onAuthStateChange((_event, nextSession) => {
-      if (nextSession && !session) initApp(nextSession);
+      if (nextSession) {
+        session = nextSession;
+        if (socket) socket.auth = { token: nextSession.access_token };
+        if (!me) initApp(nextSession);
+      }
     });
   } catch (err) {
     $('login-help').textContent = `Unable to initialize: ${err.message}`;
@@ -875,7 +874,7 @@ async function boot() {
 }
 
 async function initApp(userSession) {
-  if (session) return;
+  if (session && me) return;
   session = userSession;
   me = session.user;
   $('login-screen').style.display = 'none';
@@ -925,7 +924,7 @@ async function initApp(userSession) {
       $('peer-name').textContent = formatDisplayName(activePeer);
       if (activePeer.avatar_url) $('peer-avatar').src = activePeer.avatar_url;
     }
-    renderUserList(allUsers, $('search-input').value);
+    renderUserList(allUsers);
   });
 
   socket.on('message:new', msg => {
@@ -1230,7 +1229,6 @@ function clearReplyTarget() {
   $('reply-bar').style.display = 'none';
 }
 
-/* Multi-Pin Banner Controls */
 function updatePinnedBanner() {
   pinnedMessageIds = pinnedMessageIds.filter(id => messageStore.has(id) && !hiddenMessageIds.has(id));
   const banner = $('pinned-banner');
@@ -1268,7 +1266,6 @@ function scrollToMessage(id) {
   setTimeout(() => el.classList.remove('highlight'), 1400);
 }
 
-/* Sound Frequency Spectrum + Hands-Free Auto-Record / Auto-Send + Auto-Play Ducking */
 function startSoundFrequencySpectrum(stream) {
   const recBar = $('freq-rec-bar');
   const inputPill = $('composer-input-pill');
@@ -1324,7 +1321,6 @@ function startSoundFrequencySpectrum(stream) {
       avgEnergy = bins.reduce((a, b) => a + b, 0) / bins.length;
     }
 
-    // When user speaks, duck/pause any playing incoming voice note
     if (!isVnPaused && avgEnergy > 24) {
       speechDetectedInUtterance = true;
       silenceFrames = 0;
@@ -1333,19 +1329,20 @@ function startSoundFrequencySpectrum(stream) {
       }
     } else if (!isVnPaused && handsFreeMode) {
       silenceFrames += 1;
-      // Auto-send after ~2.2 seconds (~132 frames at 60fps) of silence once user spoke
       if (speechDetectedInUtterance && silenceFrames > 132 && mediaRecorder?.state === 'recording') {
         silenceFrames = 0;
         speechDetectedInUtterance = false;
-        mediaRecorder.dataset.autoSend = '1';
+        shouldAutoSendVn = true;
         mediaRecorder.stop();
       }
     }
 
+    const accentColor = getSafeCanvasColor('--accent', '#38a1b6');
+    const isHex6 = /^#[0-9a-fA-F]{6}$/.test(accentColor);
     const grad = ctx.createLinearGradient(0, 0, w, 0);
-    grad.addColorStop(0, 'rgba(56,161,182,.55)');
-    grad.addColorStop(0.5, 'var(--accent)');
-    grad.addColorStop(1, 'rgba(56,161,182,.60)');
+    grad.addColorStop(0, isHex6 ? `${accentColor}8c` : accentColor);
+    grad.addColorStop(0.5, accentColor);
+    grad.addColorStop(1, isHex6 ? `${accentColor}99` : accentColor);
 
     for (let i = 0; i < bars; i++) {
       let norm = 0.16;
@@ -1389,20 +1386,20 @@ async function beginVoiceRecording(streamOverride = null) {
     const stream = streamOverride || await navigator.mediaDevices.getUserMedia({ audio: true });
     audioChunks = [];
     isVnPaused = false;
+    shouldAutoSendVn = false;
     $('vn-pause-btn').textContent = 'Pause';
     mediaRecorder = new MediaRecorder(stream);
-    mediaRecorder.dataset.autoSend = '0';
     mediaRecorder.ondataavailable = e => { if (e.data.size) audioChunks.push(e.data); };
     mediaRecorder.onstop = async () => {
-      const shouldAutoSend = mediaRecorder.dataset.autoSend === '1';
+      const autoSendNow = shouldAutoSendVn;
+      shouldAutoSendVn = false;
       stopSoundFrequencySpectrum();
       stream.getTracks().forEach(t => t.stop());
       const blob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
-      if (shouldAutoSend && handsFreeMode) {
+      if (autoSendNow && handsFreeMode) {
         if (blob.size > 400) await optimisticUploadAndSend(blob, 'voice-note.webm', 'voice');
         setActionButtonState('mic');
         socket.emit('activity', { conversationId: activeConvoId, state: null, handsFreeActive: false });
-        // Restart hands-free listening loop automatically
         setTimeout(() => {
           if (handsFreeMode && activeConvoId) beginVoiceRecording();
         }, 350);
@@ -1427,6 +1424,25 @@ async function beginVoiceRecording(streamOverride = null) {
 function setupComposerAndVoice() {
   const input = $('input'), actionBtn = $('action-btn'), vnBar = $('vn-preview-bar'), vnAudio = $('vn-preview-audio');
   $('reply-cancel-btn').onclick = clearReplyTarget;
+
+  $('pinned-body').onclick = () => {
+    const id = pinnedMessageIds[activePinIndex];
+    if (id) scrollToMessage(id);
+  };
+  $('pin-prev-btn').onclick = () => {
+    if (!pinnedMessageIds.length) return;
+    activePinIndex = (activePinIndex - 1 + pinnedMessageIds.length) % pinnedMessageIds.length;
+    updatePinnedBanner();
+  };
+  $('pin-next-btn').onclick = () => {
+    if (!pinnedMessageIds.length) return;
+    activePinIndex = (activePinIndex + 1) % pinnedMessageIds.length;
+    updatePinnedBanner();
+  };
+  $('pinned-unpin').onclick = () => {
+    const id = pinnedMessageIds[activePinIndex];
+    if (id) togglePinMessage(id);
+  };
 
   $('autoplay-vn-toggle').onclick = () => {
     autoPlayVn = !autoPlayVn;
@@ -1471,7 +1487,7 @@ function setupComposerAndVoice() {
     btn.classList.toggle('on', handsFreeMode);
     btn.textContent = handsFreeMode ? 'Hands-Free: On' : 'Hands-Free: Off';
     if (!handsFreeMode && mediaRecorder?.state === 'recording') {
-      mediaRecorder.dataset.autoSend = '0';
+      shouldAutoSendVn = false;
       mediaRecorder.stop();
     }
   };
@@ -1499,7 +1515,7 @@ function setupComposerAndVoice() {
       return;
     }
     if (mediaRecorder?.state === 'recording' || mediaRecorder?.state === 'paused') {
-      mediaRecorder.dataset.autoSend = '0';
+      shouldAutoSendVn = false;
       mediaRecorder.stop();
       return;
     }
@@ -1511,12 +1527,14 @@ function setupComposerAndVoice() {
     vnAudio.removeAttribute('src');
     vnBar.style.display = 'none';
     if (mediaRecorder?.state === 'paused') {
+      shouldAutoSendVn = false;
       mediaRecorder.stop();
     }
   };
 
   $('vn-send-btn').onclick = async () => {
     if (mediaRecorder?.state === 'paused') {
+      shouldAutoSendVn = false;
       mediaRecorder.stop();
       await new Promise(r => setTimeout(r, 180));
     }
@@ -1900,7 +1918,6 @@ function buildWaVoicePlayer(url, avatarUrl) {
   return container;
 }
 
-/* `+` Menu & Emoji -> Emoji / GIF / Sticker Options */
 function setupAttachAndEmojiOptions() {
   const attachBtn = $('attach-btn');
   const attachMenu = $('attach-menu');
@@ -2069,7 +2086,6 @@ function setupAttachAndEmojiOptions() {
   };
 }
 
-/* Sticker Creator & Editor */
 function setupStickerMaker() {
   const modal = $('sticker-maker-modal');
   const canvas = $('sticker-canvas');
@@ -2126,7 +2142,6 @@ function setupStickerMaker() {
   };
 }
 
-/* Long-Press Spotlight Blur Menu with Harmonized Icons + `+` More Reactions */
 function setupContextMenu() {
   const backdrop = $('context-backdrop');
   backdrop.onclick = e => { if (e.target === backdrop) closeContextMenu(); };
@@ -2333,7 +2348,6 @@ function openForwardModal(msg) {
   $('forward-modal').style.display = 'flex';
 }
 
-/* Rich Profile Viewer/Editor & Theme Color Modal */
 function setupProfileAndThemeModals() {
   $('open-my-profile-btn').onclick = () => openProfileModal(myProfile, true);
   $('my-profile-btn').onclick = () => openProfileModal(myProfile, true);
@@ -2509,7 +2523,6 @@ function openProfileModal(userObj, editable) {
   $('profile-modal').style.display = 'flex';
 }
 
-/* iPhone WhatsApp-Style Camera & Media Studio with Bottom Device Media Strip */
 async function openCameraStudioWithCam() {
   $('studio-modal').style.display = 'flex';
   resetStudioToLiveCam();
@@ -2535,7 +2548,7 @@ function renderDeviceMediaStrip() {
   addTile.onclick = () => $('media-picker').click();
   strip.append(addTile);
 
-  deviceMediaItems.forEach((item, idx) => {
+  deviceMediaItems.forEach(item => {
     const thumb = document.createElement('img');
     thumb.className = 'device-thumb';
     thumb.src = item.thumbUrl;
@@ -2551,7 +2564,6 @@ function renderDeviceMediaStrip() {
         img.onload = () => openPhotoEditor(img);
         img.src = item.url;
       }
-      void idx;
     };
     strip.append(thumb);
   });
@@ -2771,7 +2783,7 @@ function renderEditedCanvas() {
   ctx.drawImage(rawImageObj, -rawImageObj.width / 2, -rawImageObj.height / 2);
   ctx.restore();
 
-  const accentColor = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#38a1b6';
+  const accentColor = getSafeCanvasColor('--accent', '#38a1b6');
 
   if (currentEffect === 'vignette') {
     const grad = ctx.createRadialGradient(canvas.width / 2, canvas.height / 2, canvas.width * 0.2, canvas.width / 2, canvas.height / 2, canvas.width * 0.72);
