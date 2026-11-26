@@ -7,7 +7,7 @@ const cloudinary = require('cloudinary').v2;
 const multer = require('multer');
 
 const app = express();
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -78,6 +78,7 @@ app.post('/api/upload', upload.single('media'), async (req, res) => {
   }
 });
 
+/* Fetch all users + rich profile metadata + latest visible direct message */
 app.get('/api/users', async (req, res) => {
   const token = req.headers.authorization?.replace('Bearer ', '');
   if (!token) return res.status(401).json({ error: 'Unauthorized' });
@@ -96,8 +97,7 @@ app.get('/api/users', async (req, res) => {
 
   const { data: users } = await supabaseAdmin
     .from('users')
-    .select('*')
-    .neq('id', user.id);
+    .select('*');
 
   const userList = users || [];
 
@@ -122,7 +122,7 @@ app.get('/api/users', async (req, res) => {
       .select('id, conversation_id, sender_id, msg_type, content, status, deleted_for_everyone, created_at')
       .in('conversation_id', directConvoIds)
       .order('created_at', { ascending: false })
-      .limit(200);
+      .limit(300);
 
     const latestByConvo = new Map();
     for (const m of recentMsgs || []) {
@@ -145,6 +145,46 @@ app.get('/api/users', async (req, res) => {
   }));
 
   res.json(enriched);
+});
+
+/* Update current user's full profile (name, nickname, bio, description, quote, avatar, cover) */
+app.patch('/api/profile', async (req, res) => {
+  const token = req.headers.authorization?.replace('Bearer ', '');
+  if (!token) return res.status(401).json({ error: 'Unauthorized' });
+
+  const { data: { user }, error: authErr } = await supabaseAdmin.auth.getUser(token);
+  if (authErr || !user) return res.status(401).json({ error: 'Invalid token' });
+
+  const {
+    display_name,
+    nickname,
+    bio,
+    description,
+    favorite_quote,
+    avatar_url,
+    cover_url
+  } = req.body || {};
+
+  const patch = {};
+  if (typeof display_name === 'string') patch.display_name = display_name.trim().slice(0, 80);
+  if (typeof nickname === 'string') patch.nickname = nickname.trim().slice(0, 60);
+  if (typeof bio === 'string') patch.bio = bio.trim().slice(0, 180);
+  if (typeof description === 'string') patch.description = description.trim().slice(0, 500);
+  if (typeof favorite_quote === 'string') patch.favorite_quote = favorite_quote.trim().slice(0, 240);
+  if (typeof avatar_url === 'string') patch.avatar_url = avatar_url;
+  if (typeof cover_url === 'string') patch.cover_url = cover_url;
+
+  const { data, error } = await supabaseAdmin
+    .from('users')
+    .update(patch)
+    .eq('id', user.id)
+    .select()
+    .single();
+
+  if (error) return res.status(500).json({ error: error.message });
+
+  io.emit('profile:updated', data);
+  res.json({ profile: data });
 });
 
 app.post('/api/chat/direct', async (req, res) => {
@@ -274,16 +314,45 @@ io.on('connection', async (socket) => {
     if (data) io.to(`convo:${conversationId}`).emit('message:updated', data);
   });
 
-  socket.on('message:delete', async ({ messageId, conversationId }) => {
-    const { data } = await supabaseAdmin
+  /* Delete message:
+     - scope: 'only_me' | 'both' | 'sender_own_only'
+     - A user can delete another user's message from their own end ('only_me') without affecting the other user.
+     - For a user's own message:
+         * 'both': deletes on both ends (and removes row/placeholder cleanly)
+         * 'only_me': hides from current user's end only
+         * 'sender_own_only': removes the sender's own copy while keeping the delivered copy on the recipient's end if desired
+  */
+  socket.on('message:delete', async ({ messageId, conversationId, scope = 'both' }) => {
+    const { data: msg } = await supabaseAdmin
       .from('messages')
-      .update({ deleted_for_everyone: true, content: 'This message was deleted', media_url: null })
+      .select('*')
       .eq('id', messageId)
-      .eq('sender_id', userId)
-      .select()
       .single();
 
-    if (data) io.to(`convo:${conversationId}`).emit('message:updated', data);
+    if (!msg) return;
+
+    const isOwner = msg.sender_id === userId;
+
+    if (!isOwner || scope === 'only_me') {
+      socket.emit('message:hidden_for_user', { messageId, conversationId, userId });
+      return;
+    }
+
+    if (scope === 'sender_own_only') {
+      socket.emit('message:hidden_for_user', { messageId, conversationId, userId });
+      return;
+    }
+
+    await supabaseAdmin
+      .from('messages')
+      .delete()
+      .eq('id', messageId)
+      .eq('sender_id', userId);
+
+    io.to(`convo:${conversationId}`).emit('message:removed_for_everyone', {
+      messageId,
+      conversationId
+    });
   });
 
   socket.on('message:react', ({ messageId, conversationId, emoji }) => {
@@ -292,6 +361,13 @@ io.on('connection', async (socket) => {
       conversationId,
       userId,
       emoji
+    });
+  });
+
+  socket.on('message:pin_state', ({ conversationId, pinnedIds }) => {
+    io.to(`convo:${conversationId}`).emit('message:pin_state', {
+      conversationId,
+      pinnedIds: Array.isArray(pinnedIds) ? pinnedIds : []
     });
   });
 
@@ -325,8 +401,13 @@ io.on('connection', async (socket) => {
     });
   });
 
-  socket.on('activity', ({ conversationId, state }) => {
-    socket.to(`convo:${conversationId}`).emit('activity', { conversationId, userId, state });
+  socket.on('activity', ({ conversationId, state, handsFreeActive }) => {
+    socket.to(`convo:${conversationId}`).emit('activity', {
+      conversationId,
+      userId,
+      state,
+      handsFreeActive: !!handsFreeActive
+    });
   });
 
   socket.on('haptic:tap', ({ conversationId, effect }) => {
