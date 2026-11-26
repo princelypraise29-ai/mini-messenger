@@ -45,7 +45,6 @@ app.post('/api/upload', upload.single('media'), async (req, res) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
     if (!token || !req.file) {
-      console.log('Upload missing token or file:', !!token, !!req.file);
       return res.status(400).json({ error: 'Missing file or token' });
     }
 
@@ -57,29 +56,24 @@ app.post('/api/upload', upload.single('media'), async (req, res) => {
     const isVideo = mime.startsWith('video/');
     const msgType = isAudio ? 'voice' : isVideo ? 'video' : 'image';
 
-    console.log(`Uploading ${msgType} (${mime}, ${req.file.size} bytes)...`);
-
-    const uploadOptions = {
-      folder: 'super-messenger',
-      resource_type: isAudio || isVideo ? 'video' : 'image'
-    };
-
     const result = await new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
-        uploadOptions,
+        {
+          folder: 'super-messenger',
+          resource_type: isAudio || isVideo ? 'video' : 'image'
+        },
         (err, uploaded) => (err ? reject(err) : resolve(uploaded))
       );
       stream.end(req.file.buffer);
     });
 
     const liteUrl = msgType === 'image'
-      ? result.secure_url.replace('/upload/', '/upload/w_480,q_auto:eco/')
+      ? result.secure_url.replace('/upload/', '/upload/w_540,q_auto:good/')
       : result.secure_url;
 
-    console.log('Upload success:', result.secure_url);
     res.json({ url: result.secure_url, liteUrl, msgType });
   } catch (err) {
-    console.error('Cloudinary upload error:', err);
+    console.error('Upload error:', err.message);
     res.status(500).json({ error: err.message || 'Upload failed' });
   }
 });
@@ -258,8 +252,9 @@ io.on('connection', async (socket) => {
     socket.to(`convo:${conversationId}`).emit('messages:seen', { conversationId, seenBy: userId });
   });
 
-  socket.on('typing', ({ conversationId, isTyping }) => {
-    socket.to(`convo:${conversationId}`).emit('typing', { conversationId, userId, isTyping });
+  // Live activity indicator: 'typing' | 'recording' | null
+  socket.on('activity', ({ conversationId, state }) => {
+    socket.to(`convo:${conversationId}`).emit('activity', { conversationId, userId, state });
   });
 
   socket.on('haptic:tap', ({ conversationId, effect }) => {
@@ -286,6 +281,5 @@ setInterval(async () => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Super Messenger backend running on port ${PORT}`);
+  console.log(`Super Messenger iOS backend running on port ${PORT}`);
 });
-
