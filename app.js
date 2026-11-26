@@ -99,7 +99,52 @@ app.get('/api/users', async (req, res) => {
     .select('*')
     .neq('id', user.id);
 
-  res.json(users || []);
+  const userList = users || [];
+
+  const { data: myMemberships } = await supabaseAdmin
+    .from('conversation_members')
+    .select('conversation_id, conversations!inner(type)')
+    .eq('user_id', user.id)
+    .eq('conversations.type', 'direct');
+
+  const directConvoIds = (myMemberships || []).map((m) => m.conversation_id);
+  const lastMsgByPeer = new Map();
+
+  if (directConvoIds.length > 0) {
+    const { data: peerMembers } = await supabaseAdmin
+      .from('conversation_members')
+      .select('conversation_id, user_id')
+      .in('conversation_id', directConvoIds)
+      .neq('user_id', user.id);
+
+    const { data: recentMsgs } = await supabaseAdmin
+      .from('messages')
+      .select('id, conversation_id, sender_id, msg_type, content, status, deleted_for_everyone, created_at')
+      .in('conversation_id', directConvoIds)
+      .order('created_at', { ascending: false })
+      .limit(200);
+
+    const latestByConvo = new Map();
+    for (const m of recentMsgs || []) {
+      if (!latestByConvo.has(m.conversation_id)) {
+        latestByConvo.set(m.conversation_id, m);
+      }
+    }
+
+    for (const pm of peerMembers || []) {
+      const msg = latestByConvo.get(pm.conversation_id);
+      if (msg) {
+        lastMsgByPeer.set(pm.user_id, msg);
+      }
+    }
+  }
+
+  const enriched = userList.map((u) => ({
+    ...u,
+    last_message: lastMsgByPeer.get(u.id) || null
+  }));
+
+  res.json(enriched);
 });
 
 app.post('/api/chat/direct', async (req, res) => {
@@ -241,7 +286,32 @@ io.on('connection', async (socket) => {
     if (data) io.to(`convo:${conversationId}`).emit('message:updated', data);
   });
 
+  socket.on('message:react', ({ messageId, conversationId, emoji }) => {
+    io.to(`convo:${conversationId}`).emit('message:reacted', {
+      messageId,
+      conversationId,
+      userId,
+      emoji
+    });
+  });
+
+  socket.on('message:outside_seen', async ({ conversationId }) => {
+    if (!conversationId) return;
+    await supabaseAdmin
+      .from('messages')
+      .update({ status: 'outside_seen' })
+      .eq('conversation_id', conversationId)
+      .neq('sender_id', userId)
+      .eq('status', 'sent');
+
+    socket.to(`convo:${conversationId}`).emit('messages:outside_seen', {
+      conversationId,
+      seenBy: userId
+    });
+  });
+
   socket.on('message:seen', async ({ conversationId }) => {
+    if (!conversationId) return;
     await supabaseAdmin
       .from('messages')
       .update({ status: 'seen' })
@@ -249,10 +319,12 @@ io.on('connection', async (socket) => {
       .neq('sender_id', userId)
       .neq('status', 'seen');
 
-    socket.to(`convo:${conversationId}`).emit('messages:seen', { conversationId, seenBy: userId });
+    socket.to(`convo:${conversationId}`).emit('messages:seen', {
+      conversationId,
+      seenBy: userId
+    });
   });
 
-  // Live activity indicator: 'typing' | 'recording' | null
   socket.on('activity', ({ conversationId, state }) => {
     socket.to(`convo:${conversationId}`).emit('activity', { conversationId, userId, state });
   });
@@ -281,5 +353,5 @@ setInterval(async () => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`Super Messenger iOS backend running on port ${PORT}`);
+  console.log(`Super Messenger server running on port ${PORT}`);
 });
